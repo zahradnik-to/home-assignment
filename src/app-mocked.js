@@ -6,7 +6,6 @@ const MAX_RANGE = 100;
 const API_LIMIT = 1000;
 
 async function scrape() {
-  // Initial set-up
   let products = [];
   let count = 0;
   let total = 0;
@@ -27,7 +26,13 @@ async function scrape() {
       isFirstRun = false;
     }
 
-    if (isApiLimitNotReached(result.count)) {
+    if (isApiLimitReached(result.count)) {
+      // Split current interval into two smaller ones
+      const oldMax = max;
+      max = getMiddleValue(min, max);
+      intervalMap.set(min, max); // Save first smaller interval
+      intervalMap.set(max, oldMax) // Save second smaller interval
+    } else {
       // Add found products to array and update found count
       products = products.concat(result.products);
       count += result.count;
@@ -35,12 +40,6 @@ async function scrape() {
       // Move to the next interval
       min = max;
       max = intervalMap.get(max);
-    } else {
-      // Split current interval into two smaller ones
-      const oldMax = max;
-      max = getMiddleValue(min, max);
-      intervalMap.set(min, max); // Save first smaller interval
-      intervalMap.set(max, oldMax) // Save second smaller interval
     }
 
     iterationCount++;
@@ -75,12 +74,12 @@ function getMiddleValue(min, max) {
  * @param count
  * @return {boolean}
  */
-function isApiLimitNotReached(count) {
-  return count < API_LIMIT;
+function isApiLimitReached(count) {
+  return count >= API_LIMIT;
 }
 
 // Executing await function on from top-level
 (async () => {
   const products = await scrape();
-  console.log(`Found total of ${products.length} products.`)
+  console.log(`Found total of ${products.length} products. ${JSON.stringify(products)}`)
 })();

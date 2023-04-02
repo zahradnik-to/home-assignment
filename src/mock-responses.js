@@ -14,55 +14,55 @@ const mockResponses = [
     "count": 600,
     "products": ["1"]
   },
-  { // 25-50
+  { // 26-50
     "total": 4200,
     "count": 1000,
     "products": ["skip"]
   },
-  { // 25-38
+  { // 26-38
     "total": 4200,
     "count": 600,
     "products": ["2"]
   },
-  { // 38-50
+  { // 39-50
     "total": 4200,
     "count": 600,
     "products": ["3"]
   },
-  { // 50-100
+  { // 51-100
     "total": 4200,
     "count": 1000,
     "products": ["skip"]
   },
-  { // 50-75
+  { // 51-75
     "total": 4200,
     "count": 1000,
     "products": ["skip"]
   },
-  { // 50-63
+  { // 51-63
     "total": 4200,
     "count": 1000,
     "products": ["skip"]
   },
-  { // 50-57
+  { // 51-57
     "total": 4200,
     "count": 600,
     "products": ["4"]
   },
-  { // 57-63
+  { // 58-63
     "total": 4200,
     "count": 600,
     "products": ["5"]
   },
-  { // 63-75
+  { // 64-75
     "total": 4200,
     "count": 600,
-    "products": ["5"]
+    "products": ["6"]
   },
-  { // 75-100
+  { // 76-100
     "total": 4200,
     "count": 600,
-    "products": ["5"]
+    "products": ["7"]
   }
 ];
 

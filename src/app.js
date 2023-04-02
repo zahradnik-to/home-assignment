@@ -1,11 +1,10 @@
 'use strict';
-const apiUrl = 'https://api.ecommerce.com/products'
+const API_URL = 'https://api.ecommerce.com/products'
 const MIN_RANGE = 0;
 const MAX_RANGE = 100000;
 const API_LIMIT = 1000;
 
 async function scrape() {
-  // Initial set-up
   let products = [];
   let count = 0;
   let total = 0;
@@ -16,13 +15,19 @@ async function scrape() {
   let isFirstRun = true;
 
   do {
-    const result = await getProducts({minPrice: min + minOffset, maxPrice: max});
+    const result = await getProducts({ minPrice: min + minOffset, maxPrice: max });
     if (isFirstRun) {
       total = result.total;
       isFirstRun = false;
     }
 
-    if (isApiLimitNotReached(result.count)) {
+    if (isApiLimitReached(result.count)) {
+      // Split current interval into two smaller ones
+      const oldMax = max;
+      max = getMiddleValue(min, max);
+      intervalMap.set(min, max); // Save first smaller interval
+      intervalMap.set(max, oldMax) // Save second smaller interval
+    } else {
       // Add found products to array and update found count
       products = products.concat(result.products);
       count += result.count;
@@ -30,15 +35,8 @@ async function scrape() {
       // Move to the next interval
       min = max;
       max = intervalMap.get(max);
-    } else {
-      // Split current interval into two smaller ones
-      const oldMax = max;
-      max = getMiddleValue(min, max);
-      intervalMap.set(min, max); // Save first smaller interval
-      intervalMap.set(max, oldMax) // Save second smaller interval
     }
   } while (count < total)
-
   return products;
 }
 
@@ -48,7 +46,8 @@ async function scrape() {
  * @return {Promise<any>}
  */
 async function getProducts(params) {
-  const response = await fetch(`${apiUrl}?${new URLSearchParams(params)}`);
+  const urlParams = new URLSearchParams(params).toString();
+  const response = await fetch(`${API_URL}?${urlParams}`);
   if (!response.ok) {
     throw new Error("An unexpected error occurred while fetching products.");
   }
@@ -70,8 +69,8 @@ function getMiddleValue(min, max) {
  * @param count
  * @return {boolean}
  */
-function isApiLimitNotReached(count) {
-  return count < API_LIMIT;
+function isApiLimitReached(count) {
+  return count >= API_LIMIT;
 }
 
 // Executing await function on from top-level
